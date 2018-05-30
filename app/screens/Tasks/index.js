@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native';
 import TasksList from './TasksList';
 import Add from './Add';
 
-export default Tasks = createBottomTabNavigator({
+const Tasks = createBottomTabNavigator({
     List: TasksList,
     Add: Add
   }, {
@@ -29,3 +29,5 @@ Tasks.navigationOptions = ({ navigation }) => ({
         paddingRight: 15
     }
 });
+
+export default Tasks;

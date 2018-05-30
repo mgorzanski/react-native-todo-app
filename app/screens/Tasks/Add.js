@@ -1,10 +1,12 @@
 import React from 'react';
-import { Container, Header, Content, Form, Item, Input, Label, Icon, Text } from 'native-base';
+import { Container, Content, Form, Item, Input, Label, Icon, Text, Button } from 'native-base';
 import DatePicker from 'react-native-datepicker';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { connect } from 'react-redux';
+import { addTodo } from '../../actions';
 
-export default class Add extends React.Component {
-    static navigationOptions = ({ navigation }) => ({
+class Add extends React.Component {
+    static navigationOptions = () => ({
         tabBarLabel: 'Add task',
         tabBarIcon: () => (
             <Icon type="Entypo" name="add-to-list" />
@@ -17,6 +19,10 @@ export default class Add extends React.Component {
             taskDate: this.getCurrentDate(),
             taskName: ''
         }
+    }
+
+    clearText = () => {
+        this._textInput.setNativeProps({ text: '' });
     }
 
     getCurrentDate() {
@@ -34,9 +40,9 @@ export default class Add extends React.Component {
                     <Form>
                         <Item floatingLabel>
                             <Label>Name</Label>
-                            <Input onChangeText={(text) => this.setState({ taskName: text })} />
+                            <Input onChangeText={(text) => this.setState({ taskName: text })} ref={component => this._textInput = component} />
                         </Item>
-                        <View style={{ marginLeft: 15, marginTop: 21 }}>
+                        <View style={styles.date}>
                             <Label>Date</Label>
                             <DatePicker
                                 date={this.state.taskDate}
@@ -46,8 +52,13 @@ export default class Add extends React.Component {
                                 confirmBtnText='Select'
                                 cancelBtnText='Cancel'
                                 onDateChange={(date) => this.setState({ taskDate: date })}
+                                style={styles.datepicker}
                                 iconComponent={<Icon type="MaterialIcons" name="date-range" />}
                             />
+                            <Button light block style={styles.btn} onPress={() => {
+                                this.props.addTodo(this.state.taskName, this.state.taskDate);
+                                this.clearText();
+                            }}><Text> Add </Text></Button>
                         </View>
                     </Form>
                 </Content>
@@ -55,3 +66,32 @@ export default class Add extends React.Component {
         );
     }
 }
+
+const mapStateToProps = state => {
+    return state;
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        addTodo: (name, date) => dispatch(addTodo(name, date))
+    };
+};
+
+const styles = StyleSheet.create({
+    date: {
+        marginLeft: 15,
+        marginRight: 15,
+        marginTop: 25,
+        marginBottom: 15
+    },
+
+    datepicker: {
+        marginTop: 10
+    },
+
+    btn: {
+        marginTop: 19,
+    }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Add);
